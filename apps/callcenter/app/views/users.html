@@ -1,0 +1,715 @@
+<div ng-show="!success">
+<font color="#FF0000">权限不足,无法操作!!!</font>
+</div>
+<div class="portlet box blue" ng-show="success">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-cogs"></i>用户管理
+        </div>
+        <div class="tools">
+            <a class="glyphicon glyphicon-plus" href="javascript:;">
+            </a>
+            <button type="button" class="btn red-haze btn-sm" ng-click="Create();">新建用户
+            </button>
+        </div>
+    </div>
+
+    <div class="portlet-body">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <label>Filter:
+                    <input type="search" class="form-control input-large input-inline" placeholder="用户名称" ng-model='searchKey'>
+                </label>
+                <a href="javascript:void(0);" ng-click="Search(searchKey)" class="btn btn-sm btn-primary">搜索</a>
+                <a href="javascript:void(0);" ng-click="Search('')" class="btn btn-sm btn-primary">重置</a>
+            </div>
+        </div>
+        <table class="table table-bordered">
+            <tbody>
+            <tr>
+                <th>用户ID</th>
+                <th>用户名称</th>
+                <th>性别</th>
+                <th>用户账号</th>
+                <th>Email</th>
+                <th>最近登录时间</th>
+                <th>创建时间</th>
+                <th>修改时间</th>
+                <th>管理</th>
+            </tr>
+
+            <tr ng-repeat="o in rows">
+                <td>{{ o.UserId }}</td>
+                <td>{{ o.UserName }}</td>
+                <td>{{ o.Sex }}</td>
+                <td>{{ o.UserAccount }}</td>
+                <td>{{ o.Email }}</td>
+                <td>{{ o.LoginTime }}</td>
+                <td>{{ o.CreateTime }}</td>
+                <td>{{ o.UpdateTime }}</td>
+                <td>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary btn-sm" ng-click="detailuser($index)">查看</button>
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="javascript:;" ng-click="edituser($index)">编辑用户</a></li>
+                            <li><a href="javascript:;" ng-click="deleteuser($index)">删除用户</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <paging
+                class="small"
+                page="currentPage"
+                page-size="pageSize"
+                total="total"
+                adjacent="{{adjacent}}"
+                dots="{{dots}}"
+                scroll-top="{{scrollTop}}"
+                hide-if-empty="{{hideIfEmpty}}"
+                ul-class="{{ulClass}}"
+                active-class="{{activeClass}}"
+                disabled-class="{{disabledClass}}"
+                show-prev-next="{{showPrevNext}}"
+                paging-action="pageAction( page )">
+        </paging>
+    </div>
+</div>
+
+<script type="text/ng-template" id="add.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="alert {{alert.type}}">
+        <span>{{alert.message}} </span>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="createForm">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">用户名称
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="text"
+                                       ng-maxlength=20
+                                       name="username"
+                                       username-unique="username"
+                                       class="form-control input-inline input-big" required placeholder="用户名称"
+                                       ng-model="item.UserName">
+                            </div>
+                            <div class="col-sm-offset-4 col-md-10" ng-show="createForm.username.$invalid && createForm.username.$dirty">
+                                <span ng-show="createForm.username.$error.required" style="color:red">此处不能为空</span>
+                                <span ng-show="createForm.username.$error.maxlength" style="color:red">不能多于20个字符</span>
+                                <span ng-show="createForm.username.$error.unique" style="color:red">用户名称已存在</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">公司名称
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-big"
+                                        ng-model="item.CompanyName" ng-options="s.name for s in title.companylist">
+                                        <option value="">--选择公司--</option>
+                                </select>
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">部门名称
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-big"
+                                        ng-model="item.Department" ng-options="sh.name for sh in item.CompanyName.child">
+                                <option value="">--选择部门--</option>
+                                </select>
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">职位名称
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-big"
+                                        ng-model="item.Position" ng-options="sh for sh in title.positionshow">
+                                <option value="">--选择职位--</option>
+                                </select>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">性别
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-big" ng-model="item.Sex" required>
+                                    <option value="男">男</option>
+                                    <option value="女">女</option>
+                                </select>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">用户账号
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="text"
+                                       ng-pattern="/^[A-Za-z0-9_]+$/"
+                                       ng-maxlength=20
+                                       name="useraccount"
+                                       useraccount-unique="useraccount"
+                                       class="form-control input-inline input-big" required placeholder="用户账号"
+                                       ng-model="item.UserAccount">
+                                <span class="help-inline"></span>
+                            </div>
+                            <div class="col-sm-offset-4 col-md-10" ng-show="createForm.useraccount.$invalid && createForm.useraccount.$dirty">
+                                <span ng-show="createForm.useraccount.$error.pattern" style="color:red">必须由数字和字母组成</span>
+                                <span ng-show="createForm.useraccount.$error.required" style="color:red">此处不能为空</span>
+                                <span ng-show="createForm.useraccount.$error.maxlength" style="color:red">不能多于20个字符</span>
+                                <span ng-show="createForm.useraccount.$error.unique" style="color:red">用户账户已存在</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">用户密码
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="password"
+                                       name="password"
+                                       class="form-control input-inline input-big" required placeholder="用户密码"
+                                       ng-model="item.PassWord">
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">用户电话
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="tel"
+                                       maxlength="11"
+                                       class="form-control input-inline input-big" required placeholder="用户电话"
+                                       ng-model="item.TelePhone">
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">区域名称
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="text"
+                                       class="form-control input-inline input-big" required placeholder="区域名称"
+                                       ng-model="item.Area">
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">地址
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="text"
+                                       class="form-control input-inline input-big" required placeholder="地址"
+                                       ng-model="item.Address">
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">手机
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="tel"
+                                       maxlength="11"
+                                       class="form-control input-inline input-big" required placeholder="手机"
+                                       ng-model="item.Phone">
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Email
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="email"
+                                       class="form-control input-inline input-big" required placeholder="Email"
+                                       ng-model="item.Email">
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">邮编
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="tel"
+                                       maxlength="6"
+                                       class="form-control input-inline input-big" required placeholder="邮编"
+                                       ng-model="item.Postcode">
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">生日
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="date"
+                                       class="form-control input-inline input-big" required placeholder="yyyy-MM-dd"
+                                       ng-model="item.BirthDay">
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">是否有效
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-big" ng-model="item.Is_valid" required>
+                                    <option value="1">是</option>
+                                    <option value="0">否</option>
+                                </select>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="Save()"
+                ng-disabled="!createForm.$valid">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="edituser.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="alert {{alert.type}}">
+        <span>{{alert.message}} </span>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="createForm">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">用户名称
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="text"
+                                       class="form-control input-inline input-big" required placeholder="用户名称"
+                                       ng-model="item.UserName" disabled>
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">公司名称
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control input-inline input-big" required placeholder="公司名称"
+                                       ng-model="item.CompanyName" disabled>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">部门名称
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control input-inline input-big" required placeholder="部门名称"
+                                       ng-model="item.Department" disabled>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">职位名称
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-big" required
+                                        ng-model="item.Position" ng-options="sh for sh in title.positionshow">
+                                <option value=""></option>
+                                </select>
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">性别
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-big" ng-model="item.Sex" required>
+                                    <option value="男">男</option>
+                                    <option value="女">女</option>
+                                </select>
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">用户账号
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="text"
+                                       class="form-control input-inline input-big" required placeholder="用户账号"
+                                       ng-model="item.UserAccount" disabled>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">用户电话
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="tel"
+                                       maxlength="11"
+                                       class="form-control input-inline input-big" required placeholder="用户电话"
+                                       ng-model="item.TelePhone">
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">区域名称
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="text"
+                                       class="form-control input-inline input-big" required placeholder="区域名称"
+                                       ng-model="item.Area">
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">地址
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="text"
+                                       class="form-control input-inline input-big" required placeholder="地址"
+                                       ng-model="item.Address">
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">手机
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="tel"
+                                       maxlength="11"
+                                       class="form-control input-inline input-big" required placeholder="手机"
+                                       ng-model="item.Phone">
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Email
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="email"
+                                       class="form-control input-inline input-big" required placeholder="Email"
+                                       ng-model="item.Email">
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">邮编
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="tel"
+                                       maxlength="6"
+                                       class="form-control input-inline input-big" required placeholder="邮编"
+                                       ng-model="item.Postcode">
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">生日
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="text"
+                                       class="form-control input-inline input-big" required placeholder="yyyy-MM-dd"
+                                       ng-model="item.BirthDay">
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">是否有效
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                 <select class="form-control input-inline input-big" required
+                                         ng-model="item.Is_valid">
+                                    <option value="否">否</option>
+                                    <option value="是">是</option>
+                                </select>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="userput()" ng-disabled="!createForm.$valid">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="detailuser.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="createForm">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">用户名称</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.UserName}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">公司名称</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.CompanyName}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">部门名称</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.Department}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">职位名称</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.Position}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">性别</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.Sex}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">用户账号</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.UserAccount}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">用户电话</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.TelePhone}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">区域名称</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.Area}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">地址</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.Address}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">手机</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.Phone}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">Email</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.Email}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">邮编</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.Postcode}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">生日</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.BirthDay}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">是否有效</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.Is_valid}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="deleteuser.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="alert {{alert.type}}">
+        <span>{{alert.message}} </span>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                           <font size="4">确定要删除用户<font color="#FF0000" size="5">{{ item.UserName }}?</font></font>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="userdel()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>

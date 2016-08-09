@@ -1,0 +1,253 @@
+<div class="portlet box blue">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-cogs"></i>坐席管理
+        </div>
+        <div class="tools">
+            <a class="glyphicon glyphicon-plus" href="javascript:;">
+            </a>
+            <button type="button" class="btn red-haze btn-sm" ng-click="Create();">新建坐席
+            </button>
+        </div>
+    </div>
+
+    <div class="portlet-body">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <label>Filter:
+                    <input type="search" class="form-control input-large input-inline" placeholder="坐席名称" ng-model='searchKey'>
+                </label>
+                <a href="javascript:void(0);" ng-click="Search(searchKey)" class="btn btn-sm btn-primary">搜索</a>
+                <a href="javascript:void(0);" ng-click="Search('')" class="btn btn-sm btn-primary">重置</a>
+            </div>
+        </div>
+        <table class="table table-bordered">
+            <tbody>
+            <tr>
+                <th>坐席号码</th>
+                <th>呼出电话</th>
+                <th>坐席组</th>
+                <th>管理</th>
+            </tr>
+
+            <tr ng-repeat="o in rows">
+                <td>{{ o.Oprno }}</td>
+                <td>{{ o.ShowCaller }}</td>
+                <td>{{ o.BindTeam }}</td>
+                <td>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary btn-sm" ng-click="editoprno($index)">编辑</button>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <paging
+                class="small"
+                page="currentPage"
+                page-size="pageSize"
+                total="total"
+                adjacent="{{adjacent}}"
+                dots="{{dots}}"
+                scroll-top="{{scrollTop}}"
+                hide-if-empty="{{hideIfEmpty}}"
+                ul-class="{{ulClass}}"
+                active-class="{{activeClass}}"
+                disabled-class="{{disabledClass}}"
+                show-prev-next="{{showPrevNext}}"
+                paging-action="pageAction( page )">
+        </paging>
+    </div>
+</div>
+
+<script type="text/ng-template" id="add.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="createForm">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">坐席号码
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="text"
+                                       ng-pattern="/^[0-9]+$/"
+                                       ng-maxlength=4
+                                       name="oprno"
+                                       ensure-unique="oprno"
+                                       class="form-control input-inline input-big" required placeholder="坐席号码"
+                                       ng-model="item.Oprno">
+                                <span class="help-inline"></span>
+                            </div>
+                            <div class="col-sm-offset-4 col-md-10" ng-show="createForm.oprno.$invalid && createForm.oprno.$dirty">
+                                <span ng-show="createForm.oprno.$error.pattern" style="color:red">必须由数字组成</span>
+                                <span ng-show="createForm.oprno.$error.required" style="color:red">此处不能为空</span>
+                                <span ng-show="createForm.oprno.$error.maxlength" style="color:red">只能4个字符</span>
+                                <span ng-show="createForm.oprno.$error.unique" style="color:red">坐席号已存在</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">呼出电话
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="text"
+                                       ng-pattern="/^[0-9]+$/"
+                                       ng-maxlength=10
+                                       name="showcaller"
+                                       ensure-unique="showcaller"
+                                       class="form-control input-inline input-big" required placeholder="showcaller"
+                                       ng-model="item.ShowCaller">
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">坐席组
+                            <span class="redClassFont">*</span></label>
+                                <div class="col-md-4">
+                                    <select class="form-control input-inline input-big"
+                                        ng-model="item.BindTeam" ng-options="sh for sh in title.oprnolist" required>
+                                    <option value="">--选择坐席组--</option>
+                                    </select>
+                                </div>
+                            <span class="help-inline"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="Save()" ng-disabled="!createForm.$valid">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="detailoprno.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="createForm">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">坐席号码</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.Oprno}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">呼出电话</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.ShowCaller}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">坐席组</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.BindTeam}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="editoprno.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="createForm">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">坐席号码
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control input-inline input-medium" required
+                                       ng-model="item.Oprno" disabled>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">呼出电话
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control input-inline input-medium" required
+                                       ng-model="item.ShowCaller">
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">坐席组
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-big"
+                                        ng-model="item.BindTeam" ng-options="sh for sh in title.oprnolist" required>
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            <span class="help-inline"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">坐席状态
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-big"
+                                        ng-model="item.Status" ng-options="sh for sh in title.status" required>
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                            <span class="help-inline"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="oprnoput()" ng-disabled="!createForm.$valid">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>

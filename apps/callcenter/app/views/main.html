@@ -1,0 +1,36 @@
+	<div ng-spinner-bar class="page-spinner-bar">
+		<div class="bounce1"></div>
+		<div class="bounce2"></div>
+		<div class="bounce3"></div>
+	</div>
+	<!-- END PAGE SPINNER -->
+
+	<!-- BEGIN HEADER -->
+	<div data-ng-include="'views/header.html'" data-ng-controller="HeaderCtrl" class="page-header navbar navbar-fixed-top">
+	</div>
+	<!-- END HEADER -->
+
+	<div class="clearfix">
+	</div>
+
+	<!-- BEGIN CONTAINER -->
+	<div class="page-container">
+		<!-- BEGIN SIDEBAR -->
+		<div data-ng-include="'views/sidebar.html'" data-ng-controller="SidebarCtrl" class="page-sidebar-wrapper">
+		</div>
+		<!-- END SIDEBAR -->
+
+		<!-- BEGIN CONTENT -->
+		<div class="page-content-wrapper">
+			<div class="page-content">
+				<div data-ng-include="'views/page-head.html'" data-ng-controller="PageHeadCtrl" style="margin-top: -30px;">
+				</div>
+				<div ui-view class="fade-in-up" style="margin-top: 15px;"></div>
+			</div>
+		</div>
+		<a href="javascript:;" class="page-quick-sidebar-toggler"><i class="icon-close"></i></a>
+	</div>
+	<div data-ng-include="'views/footer.html'" data-ng-controller="FooterCtrl" class="page-footer">
+	</div>
+
+

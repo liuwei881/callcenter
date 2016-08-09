@@ -1,0 +1,6 @@
+engines:
+  {'base':"mysql://root:123456@127.0.0.1/callcenter_1?charset=utf8",
+   'freectimaster':"mysql://root:123456@127.0.0.1/freeswitch_1?charset=utf8",
+   'callcentermaster':"mysql://root:123456@127.0.0.1/callcenter_1?charset=utf8",
+   'callcenterslave':"mysql://root:123456@10.10.112.152/callcenter_1?charset=utf8"
+  }

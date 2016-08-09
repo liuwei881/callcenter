@@ -1,0 +1,112 @@
+<!-- BEGIN HEADER INNER --> <div class="page-header-inner"> <!-- BEGIN LOGO --> <div class="page-logo"> <a href="#/"> <img src="/images/icon_zxr.324ea1f8.png" alt="logo" class="logo-default"> </a> <div class="menu-toggler sidebar-toggler"> <!-- DOC: Remove the above "hide" to enable the sidebar toggler button on header --> </div> </div> <!-- END LOGO --> <!-- BEGIN HEADER SEARCH BOX --> <!-- DOC: Apply "search-form-expanded" right after the "search-form" class to have half expanded search box --> <!--<form class="search-form hide" action="#" method="GET">
+		<div class="input-group">
+			<input type="text" class="form-control" placeholder="Search..." name="query">
+			<span class="input-group-btn">
+			<a href="javascript:;" class="btn submit"><i class="icon-magnifier"></i></a>
+			</span>
+		</div>
+	</form>--> <!-- END HEADER SEARCH BOX --> <!-- BEGIN RESPONSIVE MENU TOGGLER --> <a href="javascript:;" class="menu-toggler responsive-toggler" data-toggle="collapse" data-target=".navbar-collapse"> </a> <!-- END RESPONSIVE MENU TOGGLER --> <!-- BEGIN TOP NAVIGATION MENU --> <div class="top-menu"> <ul class="nav navbar-nav pull-right"> <!-- BEGIN LANGUAGE BAR --> <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte --> <!-- END LANGUAGE BAR --> <!-- BEGIN USER LOGIN DROPDOWN --> <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte --> <li class="dropdown dropdown-user"> <a class="dropdown-toggle" dropdown-menu-hover data-toggle="dropdown" data-close-others="true"> <span class="username username-hide-on-mobile"> {{username}} </span> <i class="fa fa-angle-down"></i> </a> <ul class="dropdown-menu dropdown-menu-default"> <li> <a href="javascript:;" ng-click="edit($index);"> <i class="icon-user"></i> 修改密码 </a></li> <li> <a href="javascript:;" ng-click="person($index);"> <i class="icon-lock"></i> 修改个人资料 </a> </li> <li class="divider"> </li> <li> <a href="javascript:;" ng-click="Logout();"> <i class="icon-key"></i> 登出 </a> </li> </ul> </li> <!-- END USER LOGIN DROPDOWN --> <!-- BEGIN QUICK SIDEBAR TOGGLER --> <!-- DOC: Apply "dropdown-dark" class after below "dropdown-extended" to change the dropdown styte --> <li class="dropdown dropdown-quick-sidebar-toggler"> <a href="javascript:;" ng-click="Logout();" class="dropdown-toggle"> <i class="icon-logout"></i> </a> </li> <!-- END QUICK SIDEBAR TOGGLER --> </ul> </div> <!-- END TOP NAVIGATION MENU --> </div> <script type="text/ng-template" id="edit.html"><div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="createForm">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">旧密码
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-9">
+                                <input type="password" class="form-control input-inline input-medium" required placeholder="当前密码"
+                                       ng-model="item.OldPassWord">
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				<div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">新密码
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-9">
+                                <input type="password" class="form-control input-inline input-medium" required placeholder="新密码"
+                                    ng-model="item.NewPassWord">
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+				<div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">重复密码
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-9">
+                                <input type="password" class="form-control input-inline input-medium" required placeholder="重复密码"
+                                    ng-model="item.ReNewPassWord">
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="userput()" ng-disabled="!createForm.$valid">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div></script> <script type="text/ng-template" id="person.html"><div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="createForm">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">用户名称
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control input-inline input-medium" placeholder="用户名称" required
+                                       ng-model="item.Account" disabled>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+					<div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">电话
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-9">
+                                <input type="tel" maxlength="11" class="form-control input-inline input-medium" placeholder="电话" required
+                                       ng-model="item.TelePhone">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+				<div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">别名
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-9">
+                                <input type="text" class="form-control input-inline input-medium" placeholder="别名"
+                                       ng-model="item.NickName" required>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="userput()" ng-disabled="!createForm.$valid">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div></script>

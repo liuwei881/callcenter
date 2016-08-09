@@ -1,0 +1,357 @@
+<div ng-show="!success">
+<font color="#FF0000">权限不足,无法操作!!!</font>
+</div>
+<div class="portlet box blue" ng-show="success">
+    <div class="portlet-title">
+        <div class="caption">
+            <i class="fa fa-cogs"></i>职位管理
+        </div>
+        <div class="tools">
+            <a class="glyphicon glyphicon-plus" href="javascript:;">
+            </a>
+            <button type="button" class="btn red-haze btn-sm" ng-click="Create();">新建职位
+            </button>
+        </div>
+    </div>
+
+    <div class="portlet-body">
+        <div class="row">
+            <div class="col-md-6 col-sm-6">
+                <label>Filter:
+                    <input type="search" class="form-control input-large input-inline" placeholder="职位名称" ng-model='searchKey'>
+                </label>
+                <a href="javascript:void(0);" ng-click="Search(searchKey)" class="btn btn-sm btn-primary">搜索</a>
+                <a href="javascript:void(0);" ng-click="Search('')" class="btn btn-sm btn-primary">重置</a>
+            </div>
+        </div>
+        <table class="table table-bordered">
+            <tbody>
+            <tr>
+                <th>职位ID</th>
+                <th>职位名称</th>
+                <th>描述</th>
+                <th>直属上级</th>
+                <th>是否管理职位</th>
+                <th>创建时间</th>
+                <th>修改人</th>
+                <th>修改时间</th>
+                <th>管理</th>
+            </tr>
+
+            <tr ng-repeat="o in rows">
+                <td>{{ o.PositionId }}</td>
+                <td>{{ o.PositionName }}</td>
+                <td>{{ o.Desc }}</td>
+                <td>{{ o.ReportTo }}</td>
+                <td>{{ o.Is_management }}</td>
+                <td>{{ o.CreateTime }}</td>
+                <td>{{ o.Update }}</td>
+                <td>{{ o.UpdateTime }}</td>
+                <td>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary btn-sm" ng-click="detailpos($index)">查看</button>
+                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="javascript:;" ng-click="editpos($index)">修改职位</a></li>
+                            <li><a href="javascript:;" ng-click="delpos($index)">删除职位</a></li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <paging
+                class="small"
+                page="currentPage"
+                page-size="pageSize"
+                total="total"
+                adjacent="{{adjacent}}"
+                dots="{{dots}}"
+                scroll-top="{{scrollTop}}"
+                hide-if-empty="{{hideIfEmpty}}"
+                ul-class="{{ulClass}}"
+                active-class="{{activeClass}}"
+                disabled-class="{{disabledClass}}"
+                show-prev-next="{{showPrevNext}}"
+                paging-action="pageAction( page )">
+        </paging>
+    </div>
+</div>
+
+<script type="text/ng-template" id="add.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="alert {{alert.type}}">
+        <span>{{alert.message}} </span>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="createForm">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">职位名称
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="text"
+                                       class="form-control input-inline input-big" required placeholder="职位名称"
+                                       ng-model="item.PositionName">
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">描述
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                            <textarea rows="3" class="form-control input-inline input-medium" required placeholder="职位描述"
+                                       ng-model="item.Desc"></textarea>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">直属上级
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="text"
+                                       class="form-control input-inline input-big" required placeholder="直属上级"
+                                       ng-model="item.ReportTo">
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">是否管理职位
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-big" required
+                                        ng-model="item.Is_management">
+                                    <option value="否">否</option>
+                                    <option value="是">是</option>
+                                </select>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="Save()" ng-disabled="!createForm.$valid">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="detailpos.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="createForm">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">职位名称</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.PositionName}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">描述</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.Desc}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">直属上级</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.ReportTo}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">是否管理职位</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.Is_management}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">创建人</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.Create}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">创建时间</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.CreateTime}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">修改人</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.Update}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">修改时间</label>
+                            <div class="col-md-4">
+                                <p class="form-control-static">{{item.UpdateTime}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</script>
+
+<script type="text/ng-template" id="editpos.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="alert {{alert.type}}">
+        <span>{{alert.message}} </span>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form" name="createForm">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">职位名称
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="text"
+                                       class="form-control input-inline input-big" required placeholder="职位名称"
+                                       ng-model="item.PositionName">
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">描述
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                            <textarea rows="3" class="form-control input-inline input-medium" required placeholder="职位描述"
+                                       ng-model="item.Desc"></textarea>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">直属上级
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <input type="text"
+                                       class="form-control input-inline input-big" required placeholder="直属上级"
+                                       ng-model="item.ReportTo">
+                                <span class="help-inline"></span>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">是否管理职位
+                            <span class="redClassFont">*</span></label>
+                            <div class="col-md-4">
+                                <select class="form-control input-inline input-big" required
+                                        ng-model="item.Is_management">
+                                    <option value="否">否</option>
+                                    <option value="是">是</option>
+                                </select>
+                                <span class="help-inline"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="posput()" ng-disabled="!createForm.$valid">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
+
+<script type="text/ng-template" id="delpos.html">
+    <div class="modal-header">
+        <div class="caption">
+            <h4>{{ title.title }}</h4>
+        </div>
+    </div>
+    <div class="alert {{alert.type}}">
+        <span>{{alert.message}} </span>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" role="form">
+            <div class="form-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                           <font size="4"> 确定要删除职位<font color="#FF0000" size="5">{{ item.PositionName }}?</font></font>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="posdel()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancle</button>
+    </div>
+</script>
